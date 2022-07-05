@@ -17,6 +17,7 @@ class WeatherListFragment : Fragment() {
 
     lateinit var binding : FragmentWeatherListBinding
     lateinit var viewModel: WeatherListViewModel
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -40,9 +41,19 @@ class WeatherListFragment : Fragment() {
 
     private fun renderData(appState: AppState) {
         when(appState) {
-            is AppState.Error -> { //    TODO()
+            is AppState.Error -> {
+                binding.loadingLayout.visibility = View.GONE
+                val result = appState.error.message
+                binding.cityName.text = result
+                binding.temperatureLabel.visibility = View.INVISIBLE
+                binding.feelsLikeLabel.visibility = View.INVISIBLE
+                binding.temperatureValue.text = ""
+                binding.feelsLikeValue.text = ""
+                binding.cityCoordinates.text = ""
+
                  }
-            AppState.Loading -> { //  TODO()
+            AppState.Loading -> {
+                binding.loadingLayout.visibility = View.VISIBLE
                  }
             is AppState.Success -> {
                 val result = appState.weatherData
@@ -50,6 +61,9 @@ class WeatherListFragment : Fragment() {
                 binding.temperatureValue.text = result.temperature.toString()
                 binding.feelsLikeValue.text = result.feelsLike.toString()
                 binding.cityCoordinates.text = "${result.city.lat}/${result.city.lon}"
+                binding.loadingLayout.visibility = View.GONE
+                binding.temperatureLabel.visibility = View.VISIBLE
+                binding.feelsLikeLabel.visibility = View.VISIBLE
 
             }
         }
