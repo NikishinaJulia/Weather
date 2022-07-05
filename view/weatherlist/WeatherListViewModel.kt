@@ -43,6 +43,7 @@ class WeatherListViewModel(private val liveData:MutableLiveData<AppState> = Muta
 
     override fun onCleared() {
         super.onCleared()
+        android.util.Log.d("TEST", "onCleared MyViewModel hash=" + hashCode());
     }
 
 }
