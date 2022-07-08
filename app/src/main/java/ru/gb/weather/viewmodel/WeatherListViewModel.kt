@@ -1,12 +1,10 @@
-package ru.gb.weather.view.weatherlist
+package ru.gb.weather.viewmodel
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import ru.gb.weather.model.Repository
 import ru.gb.weather.model.RepositoryLocalImpl
 import ru.gb.weather.model.RepositoryRemoteImpl
-import ru.gb.weather.viewmodel.AppState
-import java.lang.Thread.sleep
 
 class WeatherListViewModel(private val liveData:MutableLiveData<AppState> = MutableLiveData<AppState>()):ViewModel() {
 

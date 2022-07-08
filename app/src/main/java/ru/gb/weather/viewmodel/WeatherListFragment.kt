@@ -1,4 +1,4 @@
-package ru.gb.weather.view.weatherlist
+package ru.gb.weather.viewmodel
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -8,7 +8,6 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import ru.gb.weather.databinding.FragmentWeatherListBinding
-import ru.gb.weather.viewmodel.AppState
 
 class WeatherListFragment : Fragment() {
     companion object{
