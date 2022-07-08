@@ -17,6 +17,7 @@ class WeatherListFragment : Fragment() {
     lateinit var binding : FragmentWeatherListBinding
     lateinit var viewModel: WeatherListViewModel
 
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
