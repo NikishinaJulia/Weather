@@ -14,7 +14,15 @@ class WeatherListFragment : Fragment() {
         fun newInstance() = WeatherListFragment()
     }
 
-    lateinit var binding : FragmentWeatherListBinding
+    private var binding : FragmentWeatherListBinding? = null
+
+
+    override fun onDestroy() {
+        super.onDestroy()
+        binding = null
+    }
+
+
     lateinit var viewModel: WeatherListViewModel
 
 
@@ -22,9 +30,9 @@ class WeatherListFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View {
+    ): View? {
         binding = FragmentWeatherListBinding.inflate(inflater)
-        return binding.root
+        return binding!!.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -42,28 +50,28 @@ class WeatherListFragment : Fragment() {
     private fun renderData(appState: AppState) {
         when(appState) {
             is AppState.Error -> {
-                binding.loadingLayout.visibility = View.GONE
+                binding!!.loadingLayout.visibility = View.GONE
                 val result = appState.error.message
-                binding.cityName.text = result
-                binding.temperatureLabel.visibility = View.INVISIBLE
-                binding.feelsLikeLabel.visibility = View.INVISIBLE
-                binding.temperatureValue.text = ""
-                binding.feelsLikeValue.text = ""
-                binding.cityCoordinates.text = ""
+                binding!!.cityName.text = result
+                binding!!.temperatureLabel.visibility = View.INVISIBLE
+                binding!!.feelsLikeLabel.visibility = View.INVISIBLE
+                binding!!.temperatureValue.text = ""
+                binding!!.feelsLikeValue.text = ""
+                binding!!.cityCoordinates.text = ""
 
                  }
             AppState.Loading -> {
-                binding.loadingLayout.visibility = View.VISIBLE
+                binding!!.loadingLayout.visibility = View.VISIBLE
                  }
             is AppState.Success -> {
                 val result = appState.weatherData
-                binding.cityName.text = result.city.name
-                binding.temperatureValue.text = result.temperature.toString()
-                binding.feelsLikeValue.text = result.feelsLike.toString()
-                binding.cityCoordinates.text = "${result.city.lat}/${result.city.lon}"
-                binding.loadingLayout.visibility = View.GONE
-                binding.temperatureLabel.visibility = View.VISIBLE
-                binding.feelsLikeLabel.visibility = View.VISIBLE
+                binding!!.cityName.text = result.city.name
+                binding!!.temperatureValue.text = result.temperature.toString()
+                binding!!.feelsLikeValue.text = result.feelsLike.toString()
+                binding!!.cityCoordinates.text = "${result.city.lat}/${result.city.lon}"
+                binding!!.loadingLayout.visibility = View.GONE
+                binding!!.temperatureLabel.visibility = View.VISIBLE
+                binding!!.feelsLikeLabel.visibility = View.VISIBLE
 
             }
         }
