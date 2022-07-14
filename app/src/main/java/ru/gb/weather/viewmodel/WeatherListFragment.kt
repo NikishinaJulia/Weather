@@ -13,21 +13,22 @@ import ru.gb.weather.MainActivity
 import ru.gb.weather.R
 import ru.gb.weather.databinding.FragmentWeatherListBinding
 import ru.gb.weather.domain.Weather
+import ru.gb.weather.view.details.DetailsFragment
 import ru.gb.weather.view.details.OnItemClick
 
 
 class WeatherListFragment : Fragment(), OnItemClick {
-    companion object{
+    companion object {
         fun newInstance() = WeatherListFragment()
     }
 
     var isRussian = true
 
-    private var _binding : FragmentWeatherListBinding? = null
-    private val binding : FragmentWeatherListBinding
-    get(){
-        return _binding!!
-    }
+    private var _binding: FragmentWeatherListBinding? = null
+    private val binding: FragmentWeatherListBinding
+        get() {
+            return _binding!!
+        }
 
 
     override fun onDestroy() {
@@ -52,7 +53,7 @@ class WeatherListFragment : Fragment(), OnItemClick {
         super.onViewCreated(view, savedInstanceState)
 
         viewModel = ViewModelProvider(this).get(WeatherListViewModel::class.java)
-        viewModel.getLiveData().observe(viewLifecycleOwner, object : Observer<AppState>{
+        viewModel.getLiveData().observe(viewLifecycleOwner, object : Observer<AppState> {
             override fun onChanged(t: AppState) {
                 renderData(t)
 
@@ -61,10 +62,10 @@ class WeatherListFragment : Fragment(), OnItemClick {
 
         binding.weatherListFragmentFAB.setOnClickListener {
             isRussian = !isRussian
-            if(isRussian) {
+            if (isRussian) {
                 viewModel.getWeatherListForRussia()
                 binding.weatherListFragmentFAB.setImageResource(R.drawable.ic_russia)
-            }else {
+            } else {
                 viewModel.getWeatherListForWorld()
                 binding.weatherListFragmentFAB.setImageResource(R.drawable.ic_earth)
             }
@@ -73,28 +74,32 @@ class WeatherListFragment : Fragment(), OnItemClick {
     }
 
     private fun renderData(appState: AppState) {
-        when(appState) {
+        when (appState) {
             is AppState.Error -> {
                 binding.loadingLayout.visibility = View.GONE
                 val result = appState.error.message
                 Snackbar
-                    .make(binding.weatherListFragmentFAB, getString(R.string.error) + ":" + result,
-                        Snackbar.LENGTH_INDEFINITE)
+                    .make(
+                        binding.weatherListFragmentFAB, getString(R.string.error) + ":" + result,
+                        Snackbar.LENGTH_INDEFINITE
+                    )
                     .setAction(getString(R.string.reload)) {
-                        viewModel.getWeatherListForRussia() }
+                        viewModel.getWeatherListForRussia()
+                    }
                     .show()
 
-                 }
+            }
             AppState.Loading -> {
                 binding.loadingLayout.visibility = View.VISIBLE
-                 }
+            }
             is AppState.Success -> {
                 binding.loadingLayout.visibility = View.GONE
                 val result = appState.weatherData
             }
             is AppState.SuccessList -> {
                 binding.loadingLayout.visibility = View.GONE
-                binding.mainFragmentRecyclerView.adapter = WeatherListAdapter(appState.weatherList, this)
+                binding.mainFragmentRecyclerView.adapter =
+                    WeatherListAdapter(appState.weatherList, this)
 
             }
         }
@@ -102,8 +107,9 @@ class WeatherListFragment : Fragment(), OnItemClick {
     }
 
     override fun onItemClick(weather: Weather) {
-        (binding.root.context as MainActivity).supportFragmentManager.beginTransaction().hide(this).add(
-            R.id.container, DetailsFragment.newInstance(weather)
-        ).addToBackStack("").commit()
+        (binding.root.context as MainActivity).supportFragmentManager.beginTransaction().hide(this)
+            .add(
+                R.id.container, DetailsFragment.newInstance(weather)
+            ).addToBackStack("").commit()
     }
 }
