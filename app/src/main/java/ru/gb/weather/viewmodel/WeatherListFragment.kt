@@ -5,9 +5,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import com.gb.k_2135_2136_2.view.weatherlist.WeatherListAdapter
+import ru.gb.weather.view.weatherlist.WeatherListAdapter
 import com.google.android.material.snackbar.Snackbar
 import ru.gb.weather.MainActivity
 import ru.gb.weather.R
@@ -53,12 +52,8 @@ class WeatherListFragment : Fragment(), OnItemClick {
         super.onViewCreated(view, savedInstanceState)
 
         viewModel = ViewModelProvider(this).get(WeatherListViewModel::class.java)
-        viewModel.getLiveData().observe(viewLifecycleOwner, object : Observer<AppState> {
-            override fun onChanged(t: AppState) {
-                renderData(t)
-
-            }
-        })
+        viewModel.getLiveData().observe(viewLifecycleOwner,
+            { t -> renderData(t) })
 
         binding.weatherListFragmentFAB.setOnClickListener {
             isRussian = !isRussian
@@ -76,7 +71,7 @@ class WeatherListFragment : Fragment(), OnItemClick {
     private fun renderData(appState: AppState) {
         when (appState) {
             is AppState.Error -> {
-                binding.loadingLayout.visibility = View.GONE
+                binding.showResult()
                 val result = appState.error.message
                 Snackbar
                     .make(
@@ -90,19 +85,30 @@ class WeatherListFragment : Fragment(), OnItemClick {
 
             }
             AppState.Loading -> {
-                binding.loadingLayout.visibility = View.VISIBLE
+                binding.loading()
             }
             is AppState.Success -> {
-                binding.loadingLayout.visibility = View.GONE
+                binding.showResult()
                 val result = appState.weatherData
             }
             is AppState.SuccessList -> {
-                binding.loadingLayout.visibility = View.GONE
+                binding.showResult()
                 binding.mainFragmentRecyclerView.adapter =
                     WeatherListAdapter(appState.weatherList, this)
 
             }
         }
+
+    }
+
+    fun FragmentWeatherListBinding.loading(){
+        this.loadingLayout.visibility = View.VISIBLE
+        this.weatherListFragmentFAB.visibility = View.GONE
+    }
+
+    fun FragmentWeatherListBinding.showResult() {
+        this.loadingLayout.visibility = View.GONE
+        this.weatherListFragmentFAB.visibility = View.VISIBLE
 
     }
 

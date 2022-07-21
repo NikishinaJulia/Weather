@@ -1,4 +1,4 @@
-package com.gb.k_2135_2136_2.view.weatherlist
+package ru.gb.weather.view.weatherlist
 
 import android.view.LayoutInflater
 import android.view.View
