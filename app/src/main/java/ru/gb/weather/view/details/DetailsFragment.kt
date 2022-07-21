@@ -32,30 +32,37 @@ class DetailsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val weather = (arguments?.getParcelable<Weather>(BUNDLE_WEATHER_EXTRA))
+        val weather = arguments?.let { arg->
+            arg.getParcelable<Weather>(BUNDLE_WEATHER_EXTRA)
+        }
+        if (weather != null)
         renderData(weather)
     }
 
-    private fun renderData(weather: Weather?) {
+    private fun renderData(weather: Weather) {
 
-        if (weather != null) {
-            binding.cityName.text = weather.city.name
-            binding.temperatureValue.text = weather.temperature.toString()
-            binding.feelsLikeValue.text = weather.feelsLike.toString()
-            binding.cityCoordinates.text = "${weather.city.lat}/${weather.city.lon}"
-            binding.loadingLayout.visibility = View.GONE
-            binding.temperatureLabel.visibility = View.VISIBLE
-            binding.feelsLikeLabel.visibility = View.VISIBLE
+        with (binding) {
+            cityName.text = weather.city.name
+            temperatureValue.text = weather.temperature.toString()
+            feelsLikeValue.text = weather.feelsLike.toString()
+            cityCoordinates.text = "${weather.city.lat}/${weather.city.lon}"
+            loadingLayout.visibility = View.GONE
+            temperatureLabel.visibility = View.VISIBLE
+            feelsLikeLabel.visibility = View.VISIBLE
         }
     }
 
     companion object {
         const val BUNDLE_WEATHER_EXTRA = "fdkkojgo"
         fun newInstance(weather: Weather): DetailsFragment {
-            val bundle = Bundle()
-            bundle.putParcelable(BUNDLE_WEATHER_EXTRA, weather)
+
             val fr = DetailsFragment()
-            fr.arguments = bundle
+
+            fr.arguments = Bundle().apply {
+                putParcelable(BUNDLE_WEATHER_EXTRA, weather)
+                putParcelable(BUNDLE_WEATHER_EXTRA, weather)
+            }
+
             return fr
         }
     }
