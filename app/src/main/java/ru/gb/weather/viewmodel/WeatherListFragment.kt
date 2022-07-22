@@ -59,7 +59,10 @@ class WeatherListFragment : Fragment(), OnItemClick {
             isRussian = !isRussian
             if (isRussian) {
                 viewModel.getWeatherListForRussia()
-                binding.weatherListFragmentFAB.setImageResource(R.drawable.ic_russia)
+                binding.weatherListFragmentFAB.apply {
+                    setImageResource(R.drawable.ic_russia)
+                }
+
             } else {
                 viewModel.getWeatherListForWorld()
                 binding.weatherListFragmentFAB.setImageResource(R.drawable.ic_earth)
@@ -73,17 +76,21 @@ class WeatherListFragment : Fragment(), OnItemClick {
             is AppState.Error -> {
                 binding.showResult()
                 val result = appState.error.message
-                Snackbar
-                    .make(
-                        binding.weatherListFragmentFAB, getString(R.string.error) + ":" + result,
-                        Snackbar.LENGTH_INDEFINITE
-                    )
-                    .setAction(getString(R.string.reload)) {
+                binding.root.showErrorSnack(
+                    getString(R.string.error) + ":" + result,
+                    Snackbar.LENGTH_SHORT,
+                    getString(R.string.reload)
+                )
+                { _ ->
+                    if (isRussian) {
                         viewModel.getWeatherListForRussia()
+                    } else {
+                        viewModel.getWeatherListForWorld()
                     }
-                    .show()
-
+                }
             }
+
+
             AppState.Loading -> {
                 binding.loading()
             }
@@ -99,6 +106,14 @@ class WeatherListFragment : Fragment(), OnItemClick {
             }
         }
 
+    }
+    fun View.showErrorSnack(textError: String,duration: Int, actionText: String, block:(v:View)->Unit) {
+        Snackbar
+            .make(
+                this, textError, duration
+            )
+            .setAction(actionText, block)
+            .show()
     }
 
     fun FragmentWeatherListBinding.loading(){
