@@ -107,7 +107,13 @@ class WeatherListFragment : Fragment(), OnItemClick {
         }
 
     }
-    fun View.showErrorSnack(textError: String,duration: Int, actionText: String, block:(v:View)->Unit) {
+
+    fun View.showErrorSnack(
+        textError: String,
+        duration: Int,
+        actionText: String,
+        block: (v: View) -> Unit
+    ) {
         Snackbar
             .make(
                 this, textError, duration
@@ -116,7 +122,7 @@ class WeatherListFragment : Fragment(), OnItemClick {
             .show()
     }
 
-    fun FragmentWeatherListBinding.loading(){
+    fun FragmentWeatherListBinding.loading() {
         this.loadingLayout.visibility = View.VISIBLE
         this.weatherListFragmentFAB.visibility = View.GONE
     }
