@@ -43,7 +43,7 @@ class DetailsFragment : Fragment() {
             WeatherLoader.requestFirstVariant(
                 weatherLocal.city.lat,
                 weatherLocal.city.lon,
-                object : OnResponse{
+                object : OnResponse {
                     override fun onResponse(weather: WeatherDTO) {
                         bindWeatherLocalWithWeatherDTO(weatherLocal, weather)
                     }
@@ -65,9 +65,9 @@ class DetailsFragment : Fragment() {
         weatherLocal: Weather,
         weatherDTO: WeatherDTO
     ) {
-        requireActivity().runOnUiThread{
+        requireActivity().runOnUiThread {
             renderData(weatherLocal.apply {
-               this.feelsLike = weatherDTO.fact.feelsLike
+                this.feelsLike = weatherDTO.fact.feelsLike
                 this.temperature = weatherDTO.fact.temp
             })
         }

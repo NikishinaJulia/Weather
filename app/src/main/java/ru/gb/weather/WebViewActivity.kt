@@ -54,6 +54,7 @@ internal class WebViewActivity : AppCompatActivity() {
         }
 
     }
+
     fun getLines(reader: BufferedReader): String {
         return reader.lines().collect(Collectors.joining("\n"))
     }
