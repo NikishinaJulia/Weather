@@ -37,7 +37,7 @@ class WeatherListViewModel(private val liveData: MutableLiveData<AppState> = Mut
 
         liveData.value = AppState.Loading
         Thread {
-            Thread.sleep(3000L)
+            Thread.sleep(1000L)
             if (false) {
                 liveData.postValue(AppState.Error(IllegalStateException("что-то пошло не так!")))
             } else {

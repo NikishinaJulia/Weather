@@ -82,6 +82,7 @@ class DetailsFragment : Fragment() {
             renderData(weatherLocal.apply {
                 this.feelsLike = weatherDTO.fact.feelsLike
                 this.temperature = weatherDTO.fact.temp
+                this.windSpeed = weatherDTO.fact.windSpeed
             })
         }
     }
@@ -92,6 +93,7 @@ class DetailsFragment : Fragment() {
             cityName.text = weather.city.name
             temperatureValue.text = weather.temperature.toString()
             feelsLikeValue.text = weather.feelsLike.toString()
+            windSpeedValue.text = weather.windSpeed.toString()
             cityCoordinates.text = "${weather.city.lat}/${weather.city.lon}"
             loadingLayout.visibility = View.GONE
             temperatureLabel.visibility = View.VISIBLE
