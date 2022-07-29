@@ -19,11 +19,16 @@ object WeatherLoader {
         myConnection.readTimeout = 5000
         myConnection.addRequestProperty("X-Yandex-API-Key", BuildConfig.WEATHER_API_KEY)
         Thread {
-            val reader = BufferedReader(InputStreamReader(myConnection.inputStream))
 
-            val weatherDTO = Gson().fromJson(getLines(reader), WeatherDTO::class.java)
+            kotlin.runCatching {
+                val reader = BufferedReader(InputStreamReader(myConnection.inputStream))
 
-            onResponse.onResponse(weatherDTO)
+               return@runCatching Gson().fromJson(getLines(reader), WeatherDTO::class.java)
+            }.onSuccess {
+                onResponse.onResponse(it)
+            }.onFailure {
+                onResponse.onFailure(it)
+            }
         }.start()
     }
 

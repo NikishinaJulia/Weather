@@ -5,10 +5,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import com.google.android.material.snackbar.Snackbar
+import ru.gb.weather.MainActivity
+import ru.gb.weather.R
 import ru.gb.weather.databinding.FragmentDetailsBinding
 import ru.gb.weather.domain.Weather
 import ru.gb.weather.model.dto.WeatherDTO
 import ru.gb.weather.utils.WeatherLoader
+import ru.gb.weather.viewmodel.showErrorSnack
 
 class DetailsFragment : Fragment() {
 
@@ -47,15 +51,24 @@ class DetailsFragment : Fragment() {
                     override fun onResponse(weather: WeatherDTO) {
                         bindWeatherLocalWithWeatherDTO(weatherLocal, weather)
                     }
+
+                    override fun onFailure(throwable: Throwable) {
+                        view.showErrorSnack(
+                            getString(R.string.error) + ":" + throwable.message,
+                            Snackbar.LENGTH_LONG,
+                            getString(R.string.reload)
+                        ){
+
+                                 val returnFragment =
+                                     (binding.root.context as MainActivity).supportFragmentManager.fragments[0]!!
+                            (binding.root.context as MainActivity).supportFragmentManager.beginTransaction()
+                                .remove(this@DetailsFragment)
+                                .show(returnFragment)
+                                .commit()
+                        }
+                    }
                 }
             )
-
-            WeatherLoader.requestSecondVariant(
-                weatherLocal.city.lat,
-                weatherLocal.city.lon
-            ) { weatherDTO ->
-                bindWeatherLocalWithWeatherDTO(weatherLocal, weatherDTO)
-            }
         }
 
 

@@ -108,20 +108,6 @@ class WeatherListFragment : Fragment(), OnItemClick {
 
     }
 
-    fun View.showErrorSnack(
-        textError: String,
-        duration: Int,
-        actionText: String,
-        block: (v: View) -> Unit
-    ) {
-        Snackbar
-            .make(
-                this, textError, duration
-            )
-            .setAction(actionText, block)
-            .show()
-    }
-
     fun FragmentWeatherListBinding.loading() {
         this.loadingLayout.visibility = View.VISIBLE
         this.weatherListFragmentFAB.visibility = View.GONE
@@ -139,4 +125,19 @@ class WeatherListFragment : Fragment(), OnItemClick {
                 R.id.container, DetailsFragment.newInstance(weather)
             ).addToBackStack("").commit()
     }
+}
+
+
+public fun View.showErrorSnack(
+    textError: String,
+    duration: Int,
+    actionText: String,
+    block: (v: View) -> Unit
+) {
+    Snackbar
+        .make(
+            this, textError, duration
+        )
+        .setAction(actionText, block)
+        .show()
 }
