@@ -14,8 +14,9 @@ internal class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
         setContentView(R.layout.activity_main)
 
-        if(savedInstanceState == null){
-            supportFragmentManager.beginTransaction().replace(R.id.container, WeatherListFragment.newInstance()).commit()
+        if (savedInstanceState == null) {
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.container, WeatherListFragment.newInstance()).commit()
         }
     }
 }
