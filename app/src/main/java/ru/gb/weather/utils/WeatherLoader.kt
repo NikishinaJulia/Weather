@@ -10,6 +10,7 @@ import java.net.HttpURLConnection
 import java.net.URL
 
 object WeatherLoader {
+    const val WEATHER_API_KEY = "X-Yandex-API-Key"
 
     fun requestFirstVariant(lat: Double, lon: Double, onResponse: OnResponse) {
         val uri = URL("https://api.weather.yandex.ru/v2/informers?lat=${lat}&lon=${lon}")
@@ -17,17 +18,16 @@ object WeatherLoader {
 
         myConnection = uri.openConnection() as HttpURLConnection
         myConnection.readTimeout = 5000
-        myConnection.addRequestProperty("X-Yandex-API-Key", BuildConfig.WEATHER_API_KEY)
+        myConnection.addRequestProperty(WEATHER_API_KEY, BuildConfig.WEATHER_API_KEY)
         Thread {
-
-            kotlin.runCatching {
+            try {
                 val reader = BufferedReader(InputStreamReader(myConnection.inputStream))
-
-               return@runCatching Gson().fromJson(getLines(reader), WeatherDTO::class.java)
-            }.onSuccess {
-                onResponse.onResponse(it)
-            }.onFailure {
-                onResponse.onFailure(it)
+                val fromJson = Gson().fromJson(getLines(reader), WeatherDTO::class.java)
+                onResponse.onResponse(fromJson)
+            }catch (th : Throwable) {
+                onResponse.onFailure(th)
+            }finally {
+                myConnection.disconnect()
             }
         }.start()
     }
@@ -38,7 +38,7 @@ object WeatherLoader {
 
         myConnection = uri.openConnection() as HttpURLConnection
         myConnection.readTimeout = 5000
-        myConnection.addRequestProperty("X-Yandex-API-Key", BuildConfig.WEATHER_API_KEY)
+        myConnection.addRequestProperty(WEATHER_API_KEY, BuildConfig.WEATHER_API_KEY)
         Thread {
             val reader = BufferedReader(InputStreamReader(myConnection.inputStream))
             val weatherDTO = Gson().fromJson(getLines(reader), WeatherDTO::class.java)
