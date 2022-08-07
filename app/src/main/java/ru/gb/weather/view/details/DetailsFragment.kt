@@ -1,16 +1,25 @@
 package ru.gb.weather.view.details
 
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.android.material.snackbar.Snackbar
 import ru.gb.weather.MainActivity
 import ru.gb.weather.R
 import ru.gb.weather.databinding.FragmentDetailsBinding
 import ru.gb.weather.domain.Weather
 import ru.gb.weather.model.dto.WeatherDTO
+import ru.gb.weather.utils.BUNDLE_CITY_KEY
+import ru.gb.weather.utils.BUNDLE_WEATHER_DTO_KEY
+import ru.gb.weather.utils.WAVE
 import ru.gb.weather.utils.WeatherLoader
 import ru.gb.weather.viewmodel.showErrorSnack
 
@@ -22,9 +31,29 @@ class DetailsFragment : Fragment() {
             return _binding!!
         }
 
+    private var receiver: BroadcastReceiver? = null
+
+
+    fun newInstanceReceiver() = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+
+            Log.d("@@@", "onReceive ${binding.root}")
+            intent?.let {
+                it.getParcelableExtra<WeatherDTO>(BUNDLE_WEATHER_DTO_KEY)
+                    ?.let { weatherDTO ->
+                        bindWeatherLocalWithWeatherDTO(weatherLocal, weatherDTO)
+                    }
+            }
+        }
+    }
+
+    lateinit var weatherLocal: Weather
+
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
+        LocalBroadcastManager.getInstance(requireContext()).unregisterReceiver(receiver!!)
+        receiver = null
     }
 
     override fun onCreateView(
@@ -33,6 +62,7 @@ class DetailsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentDetailsBinding.inflate(inflater)
+        receiver = newInstanceReceiver()
         return binding.root
     }
 
@@ -43,13 +73,13 @@ class DetailsFragment : Fragment() {
         }
 
         weather?.let { weatherLocal ->
-
+            this.weatherLocal = weatherLocal
             WeatherLoader.requestFirstVariant(
                 weatherLocal.city.lat,
                 weatherLocal.city.lon,
                 object : OnResponse {
                     override fun onResponse(weather: WeatherDTO) {
-                        bindWeatherLocalWithWeatherDTO(weatherLocal, weather)
+
                     }
 
                     override fun onFailure(throwable: Throwable) {
@@ -69,23 +99,35 @@ class DetailsFragment : Fragment() {
                     }
                 }
             )
+            LocalBroadcastManager.getInstance(requireContext()).registerReceiver(
+                receiver!!,
+                IntentFilter(WAVE)
+            )
+
+            requireActivity().startService(
+                Intent(
+                    requireContext(),
+                    DetailsServiceIntent::class.java
+                ).apply {
+                    putExtra(BUNDLE_CITY_KEY, weatherLocal.city)
+                })
         }
 
 
     }
+
 
     private fun bindWeatherLocalWithWeatherDTO(
         weatherLocal: Weather,
         weatherDTO: WeatherDTO
     ) {
-        requireActivity().runOnUiThread {
-            renderData(weatherLocal.apply {
-                this.feelsLike = weatherDTO.fact.feelsLike
-                this.temperature = weatherDTO.fact.temp
-                this.windSpeed = weatherDTO.fact.windSpeed
-            })
-        }
+        renderData(weatherLocal.apply {
+            feelsLike = weatherDTO.fact.feelsLike
+            temperature = weatherDTO.fact.temp
+            windSpeed = weatherDTO.fact.windSpeed
+        })
     }
+
 
     private fun renderData(weather: Weather) {
 
@@ -107,9 +149,8 @@ class DetailsFragment : Fragment() {
 
             fr.arguments = Bundle().apply {
                 putParcelable(BUNDLE_WEATHER_EXTRA, weather)
-                putParcelable(BUNDLE_WEATHER_EXTRA, weather)
             }
-
+             return fr
         }
     }
 

@@ -21,6 +21,10 @@
         </intent-filter>
         </activity>
 
+        <service
+            android:name=".view.details.DetailsServiceIntent"
+            android:exported="true" />
+
 
         <activity
             android:name=".WebViewActivity"
